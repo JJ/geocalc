@@ -45,6 +45,7 @@
 			const salidaEl = document.getElementById("salida");
 			const texto = salidaEl.textContent || salidaEl.innerText || "";
 			if (!texto) { return; }
+			if (navigator.clipboard && window.isSecureContext) {
 				navigator.clipboard.writeText(texto).catch(() => {
 					// ignore errors silently
 				});
