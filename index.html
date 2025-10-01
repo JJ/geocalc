@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Calculator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+	<div style="width:100%; display: flex; flex-direction: column; align-items: center;">
+		<input type="text" id="datos" style="width:100%;" placeholder="Datos">
+		<button onclick="calcular()" style="width:100%;">Calcular</button>
+		<p id="salida" style="width:100%;"></p>
+	</div>
+
+	<script>
+		function calcular() {
+			let datos = document.getElementById("datos").value;
+			let numbers = datos.replace(/[\s,;]+/g, " ").trim().split(" ");
+			let sum = 0;
+			for (let i = 0; i < numbers.length; i++) {
+				sum += parseFloat(numbers[i]);
+			}
+			let average = sum / numbers.length;
+			document.getElementById("salida").innerHTML = average;
+		}
+	</script>
+</body>
+</html>
