@@ -7,8 +7,8 @@
 	<div style="width:100%; display: flex; flex-direction: column; align-items: center; font-family: sans-serif; font-size: 32px;">
         <h1>Geocalc</h1>
         <p>Introduce una lista de números separados por espacios, comas o punto y coma</p>
-  		<input type="text" id="datos" style="width:100%; font-size:24px;" placeholder="Datos" onkeydown="if (event.key === 'Enter') calcular();">
-		<button onclick="calcular()" style="width:100%;">Calcular</button>
+      	<input type="text" id="datos" style="width:100%; font-size:24px;" placeholder="Datos" onkeydown="if (event.key === 'Enter') calcular();" oninput="marcarNegativos()">
+      	<button onclick="calcular()" style="width:100%;">Calcular</button>
   		<div style="width:100%; display:flex; gap:8px; align-items:center;">
             <h2>La media es:</h2>
 			<p id="salida" style="flex:1; margin:0; padding:8px; background:#f5f5f5; border:1px solid #ddd; border-radius:4px;"></p>
@@ -30,11 +30,21 @@
 			document.getElementById("salida").innerHTML = average;
 		}
 
+		function marcarNegativos() {
+			const el = document.getElementById('datos');
+			const tokens = el.value.replace(/[\s,;]+/g, ' ').trim().split(' ').filter(Boolean);
+			let hasNegative = false;
+			for (let i = 0; i < tokens.length; i++) {
+				const n = parseFloat(tokens[i]);
+				if (!isNaN(n) && n < 0) { hasNegative = true; break; }
+			}
+			el.style.color = hasNegative ? 'red' : '';
+		}
+
 		function copiar() {
 			const salidaEl = document.getElementById("salida");
 			const texto = salidaEl.textContent || salidaEl.innerText || "";
 			if (!texto) { return; }
-			if (navigator.clipboard && window.isSecureContext) {
 				navigator.clipboard.writeText(texto).catch(() => {
 					// ignore errors silently
 				});
