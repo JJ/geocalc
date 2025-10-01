@@ -8,6 +8,7 @@
         <h1>Geocalc</h1>
         <p>Introduce una lista de números separados por espacios, comas o punto y coma</p>
       	<input type="text" id="datos" style="width:100%; font-size:24px;" placeholder="Datos" onkeydown="if (event.key === 'Enter') calcular();" oninput="marcarNegativos()">
+      	<div id="marcado" style="width:100%; font-size:24px; white-space: pre-wrap; margin-top:4px;"></div>
       	<button onclick="calcular()" style="width:100%;">Calcular</button>
   		<div style="width:100%; display:flex; gap:8px; align-items:center;">
             <h2>La media es:</h2>
@@ -31,14 +32,40 @@
 		}
 
 		function marcarNegativos() {
-			const el = document.getElementById('datos');
-			const tokens = el.value.replace(/[\s,;]+/g, ' ').trim().split(' ').filter(Boolean);
-			let hasNegative = false;
+			const inputEl = document.getElementById('datos');
+			const outEl = document.getElementById('marcado');
+			const raw = inputEl.value;
+			// Split into number tokens and delimiter tokens (spaces, commas, semicolons)
+			const tokens = raw.match(/[^\s,;]+|[\s,;]+/g) || [];
+			// Find first numeric token
+			let firstNum = null;
 			for (let i = 0; i < tokens.length; i++) {
+				if (/^[\s,;]+$/.test(tokens[i])) continue;
 				const n = parseFloat(tokens[i]);
-				if (!isNaN(n) && n < 0) { hasNegative = true; break; }
+				if (!isNaN(n)) { firstNum = n; break; }
 			}
-			el.style.color = hasNegative ? 'red' : '';
+			if (firstNum === null || firstNum >= 0) {
+				outEl.innerHTML = '';
+				return;
+			}
+			function esc(s){
+				return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+			}
+			let html = '';
+			for (let i = 0; i < tokens.length; i++) {
+				const t = tokens[i];
+				if (/^[\s,;]+$/.test(t)) {
+					html += t.replace(/ /g,'&nbsp;');
+					continue;
+				}
+				const n = parseFloat(t);
+				if (!isNaN(n) && n < 0) {
+					html += '<span style="color:red;">' + esc(t) + '</span>';
+				} else {
+					html += esc(t);
+				}
+			}
+			outEl.innerHTML = html;
 		}
 
 		function copiar() {
